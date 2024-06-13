@@ -1,0 +1,109 @@
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tab_layout"/>
+
+        <ImageButton
+            android:id="@+id/menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp"/>
+    </RelativeLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/white"
+        app:menu="@menu/drawer_view"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="More">
+        <menu>
+            <item
+                android:id="@+id/nav_sign_up"
+                android:title="Sign Up"/>
+            <item
+                android:id="@+id/nav_me"
+                android:title="Me"/>
+            <item
+                android:id="@+id/nav_downloads"
+                android:title="Downloads"/>
+            <item
+                android:id="@+id/nav_notes"
+                android:title="Notes"/>
+            <item
+                android:id="@+id/nav_plans"
+                android:title="Plans"/>
+            <item
+                android:id="@+id/nav_settings"
+                android:title="Settings"/>
+        </menu>
+    </item>
+</menu>
+package com.example.ourcpu
+
+import android.os.Bundle
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        menu_button.setOnClickListener {
+            drawerLayout.openDrawer(navView)
+        }
+
+        // Setup ViewPager and TabLayout
+        view_pager.adapter = ViewPagerAdapter(this)
+        TabLayoutMediator(tab_layout, view_pager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Findings"
+                1 -> "Mood Tracking"
+                2 -> "Nutrition"
+                3 -> "Routine"
+                4 -> "Psycho/Social Habits"
+                else -> null
+            }
+        }.attach()
+    }
+}
